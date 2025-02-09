@@ -5,16 +5,18 @@ import { MapPin, Camera, Leaf, Volume2 } from "lucide-react";
 
 export default function Home() {
     return (
-        <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        <main className="flex  flex-col items-center justify-between p-24">
             {/* Section Héro */}
             <section className="text-center mb-16">
                 <h1 className="text-4xl font-bold mb-4">Découvrez et Suivez les Espèces Menacées dans Votre Région</h1>
-                <p className="text-xl mb-8">Téléchargez, suivez et apprenez sur les animaux et plantes autour de vous.</p>
+                <p className="text-xl mb-8">
+                    Téléchargez, suivez et apprenez sur les animaux et plantes autour de vous.
+                </p>
                 <div className="flex justify-center gap-4">
-                    <Button asChild>
+                    <Button className="">
                         <Link href="/upload">Commencer à Suivre</Link>
                     </Button>
-                    <Button variant="outline" asChild>
+                    <Button>
                         <Link href="/map">Explorer la Carte</Link>
                     </Button>
                 </div>
