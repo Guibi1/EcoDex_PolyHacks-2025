@@ -27,7 +27,7 @@ export default async function OtherUserProfilePage({ params }: { params: Promise
         <HydrationBoundary state={dehydrate(queryClient)}>
             <main className="container mx-auto p-8 py-8 flex flex-col overflow-hidden">
                 <div className="sticky">
-                    <div className="flex flex-row items-center gap-4 mb-8">
+                    <div className="flex flex-row items-center gap-4 mb-4">
                         <Avatar>
                             <AvatarImage src={user.avatar_url ?? undefined} />
                             <AvatarFallback>

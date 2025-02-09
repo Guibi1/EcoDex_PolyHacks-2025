@@ -15,7 +15,7 @@ import { useSupabase } from "~/lib/supabase/client";
 import { dataOrThrow } from "~/lib/utils";
 import Pokemon3dRender from "./Pokemon3dRender";
 
-export default function PictureDrawer({ id, children }: { id: string; children: ReactNode }) {
+export default function PokemonDrawer({ id, children }: { id: string; children: ReactNode }) {
     const supabase = useSupabase();
     const { data: pokemon } = useQuery({
         queryKey: ["pokemon", id],
