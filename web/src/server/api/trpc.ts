@@ -9,6 +9,7 @@
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
+import { createSupabase } from "~/lib/supabase/server";
 
 /**
  * 1. CONTEXT
@@ -23,7 +24,11 @@ import { ZodError } from "zod";
  * @see https://trpc.io/docs/server/context
  */
 export const createTRPCContext = async (opts: { headers: Headers }) => {
+    const supabase = await createSupabase();
+    const { data } = await supabase.auth.getUser();
+
     return {
+        user: data.user,
         ...opts,
     };
 };
@@ -110,13 +115,14 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
  * @see https://trpc.io/docs/procedures
  */
 export const protectedProcedure = t.procedure.use(timingMiddleware).use(({ ctx, next }) => {
-    // if (!ctx.session || !ctx.session.user) {
-    //     throw new TRPCError({ code: "UNAUTHORIZED" });
-    // }
+    if (!ctx.user) {
+        throw new TRPCError({ code: "UNAUTHORIZED" });
+    }
+
     return next({
         ctx: {
-            // infers the `session` as non-nullable
-            // session: { ...ctx.session, user: ctx.session.user },
+            ...ctx,
+            user: ctx.user,
         },
     });
 });
