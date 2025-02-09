@@ -8,6 +8,7 @@ import {
     LogOutIcon,
     MoonIcon,
     SunIcon,
+    SunMoonIcon,
     UserIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
@@ -70,7 +71,10 @@ export default function Navigation() {
 
                         <DropdownMenuGroup>
                             <DropdownMenuSub>
-                                <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+                                <DropdownMenuSubTrigger>
+                                    <SunMoonIcon />
+                                    Theme
+                                </DropdownMenuSubTrigger>
 
                                 <DropdownMenuPortal>
                                     <DropdownMenuSubContent>
