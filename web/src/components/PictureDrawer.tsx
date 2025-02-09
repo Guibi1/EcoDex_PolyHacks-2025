@@ -36,26 +36,81 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
 
             const base64image = camera.current.getScreenshot() as string;
             const imagePath = `${user.id}/${nanoid()}.jpeg`;
+            const imageBuffer = decode(base64image.split(",")[1] as string);
+
+            // Upload image to Supabase storage
             dataOrThrow(
-                await supabase.storage.from("images").upload(imagePath, decode(base64image.split(",")[1] as string), {
+                await supabase.storage.from("images").upload(imagePath, imageBuffer, {
                     contentType: "image/jpeg",
                 }),
             );
 
+            // Get the public URL of the uploaded image
+            const { data, error } = supabase.storage.from("images").getPublicUrl(imagePath);
+
+            if (error || !data?.publicUrl) {
+                throw new Error("Failed to get image URL.");
+            }
+
+            const publicURL = data.publicUrl;
+
+            // Send image URL to the external API for classification
+            const response = await fetch("https://helpful-blatantly-koi.ngrok-free.app/get_image_result", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ image: publicURL }),
+            });
+
+            if (!response.ok) {
+                throw new Error("Failed to send image to the server.");
+            }
+
+            // Attempt to parse the response as JSON
+            const apiData = await response.json();
+
+            // Log the API response for debugging
+            console.log("API Response:", apiData);
+
+            // Safely modify and parse the predicted_class string
+            let predictions = [];
+            try {
+                // Replace Python-style tuples with valid JSON array format
+                const formattedPredictions = apiData.predicted_class
+                    .replace(/\(/g, "[") // Replace opening parentheses with opening brackets
+                    .replace(/\)/g, "]") // Replace closing parentheses with closing brackets
+                    .replace(/'/g, '"'); // Replace single quotes with double quotes for valid JSON
+
+                // Now parse the properly formatted string as JSON
+                predictions = JSON.parse(formattedPredictions);
+            } catch (e) {
+                console.error("Error parsing predicted_class:", e);
+                throw new Error("Failed to parse predictions.");
+            }
+
+            // Extract the ID from the very first tuple (highest prediction)
+            const highestPredictionId = predictions.length > 0 ? predictions[0][0] : null;
+            if (!highestPredictionId) {
+                throw new Error("No valid predictions found.");
+            }
+
+            // Create observation record in Supabase with the species ID (highest prediction)
             const observation = dataOrThrow(
                 await supabase
                     .from("Observations")
                     .insert({
                         image: imagePath,
                         position: { lng: coords.longitude, lat: coords.latitude } satisfies Position,
+                        species: highestPredictionId, // Store the ID of the highest prediction
                     })
                     .select("id"),
             ) as { id: string }[];
 
             return observation.at(0)?.id;
         },
-        onSuccess(image) {
-            router.push(`/uploads/${image}`);
+        onSuccess(id) {
+            router.push(`/uploads/${id}`);
         },
         onError(error) {
             toast(error.name, {
