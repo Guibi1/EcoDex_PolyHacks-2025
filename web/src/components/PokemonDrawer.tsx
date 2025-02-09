@@ -24,7 +24,7 @@ export default function PokemonDrawer({ id, children }: { id: string; children: 
         },
     });
 
-    if (!pokemon) notFound();
+    if (!pokemon) return <div></div>;
     return (
         <Drawer snapPoints={["200px", 1]}>
             <DrawerTrigger asChild>{children}</DrawerTrigger>

@@ -60,7 +60,7 @@ export default function WorldMap() {
                     </Marker>
 
                     {observations
-                        ?.filter((o) => o.species)
+                        ?
                         .map((observation) => (
                             <Marker
                                 longitude={observation.position.lng}
