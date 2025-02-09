@@ -36,23 +36,25 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
             const { user } = dataOrThrow(await supabase.auth.getUser());
 
             const base64image = camera.current.takePhoto("base64url") as string;
-            const imageId = nanoid();
-            dataOrThrow(
+            const upload = dataOrThrow(
                 await supabase.storage
                     .from("images")
-                    .upload(`${user.id}/${imageId}.jpeg`, decode(base64image.split(",")[1] as string), {
+                    .upload(`${user.id}/${nanoid()}.jpeg`, decode(base64image.split(",")[1] as string), {
                         contentType: "image/jpeg",
                     }),
             );
 
-            dataOrThrow(
-                await supabase.from("Observations").insert({
-                    image_id: imageId,
-                    position: { lng: coords.longitude, lat: coords.latitude } satisfies Position,
-                }),
-            );
+            const observation = dataOrThrow(
+                await supabase
+                    .from("Observations")
+                    .insert({
+                        image_id: upload.id,
+                        position: { lng: coords.longitude, lat: coords.latitude } satisfies Position,
+                    })
+                    .select("id"),
+            ) as { id: string }[];
 
-            return imageId;
+            return observation.at(0)?.id;
         },
         onSuccess(image) {
             router.push(`/uploads/${image}`);

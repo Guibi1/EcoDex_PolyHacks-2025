@@ -13,31 +13,31 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          identification: string | null
           image_id: string
           position: Json
+          species: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
           id?: number
-          identification?: string | null
           image_id: string
           position: Json
+          species?: string | null
           user_id?: string
         }
         Update: {
           created_at?: string
           id?: number
-          identification?: string | null
           image_id?: string
           position?: Json
+          species?: string | null
           user_id?: string
         }
         Relationships: [
           {
             foreignKeyName: "Observations_identification_fkey"
-            columns: ["identification"]
+            columns: ["species"]
             isOneToOne: false
             referencedRelation: "Species"
             referencedColumns: ["id"]
