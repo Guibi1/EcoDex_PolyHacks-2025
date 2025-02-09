@@ -33,7 +33,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <MapProvider>
                     <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
-                        <body className="h-dvh">
+                        <body className="h-dvh flex flex-col">
                             <ThemeProvider
                                 attribute="class"
                                 defaultTheme="system"

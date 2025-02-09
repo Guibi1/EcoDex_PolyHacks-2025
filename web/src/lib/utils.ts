@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function dataOrThrow<D, E>(
-    response: { error: E; data: null | Record<string, null> } | { error: null; data: D },
+    response: { error: E; data: null | unknown } | { error: null; data: D },
 ): NonNullable<D> {
     if (response.error) {
         throw response.error;

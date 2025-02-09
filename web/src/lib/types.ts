@@ -1,6 +1,12 @@
+import type { Database } from "./supabase/database.types";
+
 export type Position = {
     lng: number;
     lat: number;
+};
+
+export type Observation = Omit<Database["public"]["Tables"]["Observations"]["Row"], "position"> & {
+    position: Position;
 };
 
 declare module "@supabase/auth-js" {

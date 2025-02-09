@@ -38,88 +38,86 @@ export default function Navigation() {
     const user = useUser();
 
     return (
-        <div className="h-20">
-            <div className="z-50 fixed inset-0 top-auto mt-2 border-t bg-background">
-                <div className="container p-2 mx-auto flex justify-around items-center">
-                    <Button variant="ghost" className="size-10 rounded-full bg-muted">
-                        <LayoutListIcon />
+        <div className="z-50 sticky inset-0 top-auto border-t bg-background">
+            <div className="container p-2 mx-auto flex justify-around items-center">
+                <Button variant="ghost" className="size-10 rounded-full bg-muted">
+                    <LayoutListIcon />
+                </Button>
+
+                <PictureDrawer>
+                    <Button className="size-12 rounded-full">
+                        <CameraIcon />
                     </Button>
+                </PictureDrawer>
 
-                    <PictureDrawer>
-                        <Button className="size-12 rounded-full">
-                            <CameraIcon />
-                        </Button>
-                    </PictureDrawer>
+                <DropdownMenu>
+                    <DropdownMenuTrigger>
+                        <Avatar>
+                            <AvatarImage src={user?.user_metadata.avatar_url} />
+                            <AvatarFallback>
+                                <UserIcon />
+                            </AvatarFallback>
+                        </Avatar>
+                    </DropdownMenuTrigger>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger>
-                            <Avatar>
-                                <AvatarImage src={user?.user_metadata.avatar_url} />
-                                <AvatarFallback>
-                                    <UserIcon />
-                                </AvatarFallback>
-                            </Avatar>
-                        </DropdownMenuTrigger>
+                    <DropdownMenuContent className="w-60">
+                        {user && (
+                            <DropdownMenuLabel className="text-lg">
+                                <p className="font-light text-sm">Bonjour, </p>
+                                {user?.user_metadata.full_name}
+                            </DropdownMenuLabel>
+                        )}
 
-                        <DropdownMenuContent className="w-60">
-                            {user && (
-                                <DropdownMenuLabel className="text-lg">
-                                    <p className="font-light text-sm">Bonjour, </p>
-                                    {user?.user_metadata.full_name}
-                                </DropdownMenuLabel>
-                            )}
+                        <DropdownMenuGroup>
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
 
-                            <DropdownMenuGroup>
-                                <DropdownMenuSub>
-                                    <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+                                <DropdownMenuPortal>
+                                    <DropdownMenuSubContent>
+                                        <DropdownMenuItem onClick={() => setTheme("light")}>
+                                            <SunIcon />
+                                            Light
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                            <MoonIcon />
+                                            Dark
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => setTheme("system")}>
+                                            <ComputerIcon />
+                                            System
+                                        </DropdownMenuItem>
+                                    </DropdownMenuSubContent>
+                                </DropdownMenuPortal>
+                            </DropdownMenuSub>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
 
-                                    <DropdownMenuPortal>
-                                        <DropdownMenuSubContent>
-                                            <DropdownMenuItem onClick={() => setTheme("light")}>
-                                                <SunIcon />
-                                                Light
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => setTheme("dark")}>
-                                                <MoonIcon />
-                                                Dark
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem onClick={() => setTheme("system")}>
-                                                <ComputerIcon />
-                                                System
-                                            </DropdownMenuItem>
-                                        </DropdownMenuSubContent>
-                                    </DropdownMenuPortal>
-                                </DropdownMenuSub>
-                            </DropdownMenuGroup>
-                            <DropdownMenuSeparator />
-
-                            {user ? (
-                                <DropdownMenuItem
-                                    onClick={async () => {
-                                        const { error } = await supabase.auth.signOut();
-                                        if (error) toast(error.name, { description: error.message });
-                                        else router.refresh();
-                                    }}
-                                >
-                                    <LogOutIcon />
-                                    Log out
-                                </DropdownMenuItem>
-                            ) : (
-                                <DropdownMenuItem
-                                    onClick={() =>
-                                        supabase.auth.signInWithOAuth({
-                                            provider: "discord",
-                                            options: { redirectTo: `${location.origin}/api/auth/callback` },
-                                        })
-                                    }
-                                >
-                                    <LogInIcon />
-                                    Log in
-                                </DropdownMenuItem>
-                            )}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
+                        {user ? (
+                            <DropdownMenuItem
+                                onClick={async () => {
+                                    const { error } = await supabase.auth.signOut();
+                                    if (error) toast(error.name, { description: error.message });
+                                    else router.refresh();
+                                }}
+                            >
+                                <LogOutIcon />
+                                Log out
+                            </DropdownMenuItem>
+                        ) : (
+                            <DropdownMenuItem
+                                onClick={() =>
+                                    supabase.auth.signInWithOAuth({
+                                        provider: "discord",
+                                        options: { redirectTo: `${location.origin}/api/auth/callback` },
+                                    })
+                                }
+                            >
+                                <LogInIcon />
+                                Log in
+                            </DropdownMenuItem>
+                        )}
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
         </div>
     );
