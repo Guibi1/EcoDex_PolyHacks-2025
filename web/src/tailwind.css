@@ -5,7 +5,8 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+        "Segoe UI Symbol", "Noto Color Emoji";
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -48,20 +49,20 @@
 
 @layer base {
     :root {
-        --background: 0 0% 100%;
-        --foreground: 0 0% 3.9%;
+        --background: 0 0% 98%; /* Background */
+        --foreground: 0 0% 10%; /* Adjusted foreground */
         --card: 0 0% 100%;
-        --card-foreground: 0 0% 3.9%;
+        --card-foreground: 0 0% 10%; /* Adjusted card foreground */
         --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 3.9%;
-        --primary: 0 0% 9%;
-        --primary-foreground: 0 0% 98%;
+        --popover-foreground: 0 0% 10%; /* Adjusted popover foreground */
+        --primary: 119 39% 43%; /* Primary color */
+        --primary-foreground: 0 0% 98%; /* Primary foreground */
         --secondary: 0 0% 96.1%;
-        --secondary-foreground: 0 0% 9%;
-        --muted: 0 0% 96.1%;
-        --muted-foreground: 0 0% 45.1%;
+        --secondary-foreground: 119 39% 20%; /* Adjusted secondary foreground */
+        --muted: 101 48% 76%; /* Muted color */
+        --muted-foreground: 0 0% 30%; /* Adjusted muted foreground */
         --accent: 0 0% 96.1%;
-        --accent-foreground: 0 0% 9%;
+        --accent-foreground: 119 39% 20%; /* Adjusted accent foreground */
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 98%;
         --border: 0 0% 89.8%;
@@ -72,7 +73,7 @@
         --chart-3: 197 37% 24%;
         --chart-4: 43 74% 66%;
         --chart-5: 27 87% 67%;
-        --radius: 0.5rem;
+        --radius: 1rem;
     }
 
     .dark {
@@ -82,14 +83,14 @@
         --card-foreground: 0 0% 98%;
         --popover: 0 0% 3.9%;
         --popover-foreground: 0 0% 98%;
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
+        --primary: 119 39% 43%;
+        --primary-foreground: 0 0% 98%;
         --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
+        --secondary-foreground: 119 39% 90%;
         --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
+        --muted-foreground: 101 48% 30%;
         --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
+        --accent-foreground: 119 39% 90%;
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 0 0% 98%;
         --border: 0 0% 14.9%;

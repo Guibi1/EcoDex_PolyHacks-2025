@@ -1,6 +1,16 @@
 "use client";
 
-import { CameraIcon, LayoutListIcon, LogInIcon, LogOutIcon, UserIcon } from "lucide-react";
+import {
+    CameraIcon,
+    ComputerIcon,
+    LayoutListIcon,
+    LogInIcon,
+    LogOutIcon,
+    MoonIcon,
+    SunIcon,
+    UserIcon,
+} from "lucide-react";
+import { useTheme } from "next-themes";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSupabase, useUser } from "~/lib/supabase/client";
@@ -10,14 +20,20 @@ import { Button } from "./ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
+    DropdownMenuPortal,
     DropdownMenuSeparator,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 
 export default function Navigation() {
     const router = useRouter();
+    const { setTheme } = useTheme();
     const supabase = useSupabase();
     const user = useUser();
 
@@ -45,11 +61,39 @@ export default function Navigation() {
                             </Avatar>
                         </DropdownMenuTrigger>
 
-                        {user ? (
-                            <DropdownMenuContent className="w-40">
-                                <DropdownMenuLabel>{user?.user_metadata.full_name}</DropdownMenuLabel>
-                                <DropdownMenuSeparator />
+                        <DropdownMenuContent className="w-60">
+                            {user && (
+                                <DropdownMenuLabel className="text-lg">
+                                    <p className="font-light text-sm">Bonjour, </p>
+                                    {user?.user_metadata.full_name}
+                                </DropdownMenuLabel>
+                            )}
 
+                            <DropdownMenuGroup>
+                                <DropdownMenuSub>
+                                    <DropdownMenuSubTrigger>Theme</DropdownMenuSubTrigger>
+
+                                    <DropdownMenuPortal>
+                                        <DropdownMenuSubContent>
+                                            <DropdownMenuItem onClick={() => setTheme("light")}>
+                                                <SunIcon />
+                                                Light
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setTheme("dark")}>
+                                                <MoonIcon />
+                                                Dark
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setTheme("system")}>
+                                                <ComputerIcon />
+                                                System
+                                            </DropdownMenuItem>
+                                        </DropdownMenuSubContent>
+                                    </DropdownMenuPortal>
+                                </DropdownMenuSub>
+                            </DropdownMenuGroup>
+                            <DropdownMenuSeparator />
+
+                            {user ? (
                                 <DropdownMenuItem
                                     onClick={async () => {
                                         const { error } = await supabase.auth.signOut();
@@ -60,9 +104,7 @@ export default function Navigation() {
                                     <LogOutIcon />
                                     Log out
                                 </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        ) : (
-                            <DropdownMenuContent className="w-40">
+                            ) : (
                                 <DropdownMenuItem
                                     onClick={() =>
                                         supabase.auth.signInWithOAuth({
@@ -74,8 +116,8 @@ export default function Navigation() {
                                     <LogInIcon />
                                     Log in
                                 </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        )}
+                            )}
+                        </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
             </div>

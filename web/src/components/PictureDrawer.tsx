@@ -6,13 +6,12 @@ import { BombIcon, LoaderIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
 import { type ReactNode, useRef } from "react";
-import { Camera, type CameraType } from "react-camera-pro";
 import { useGeolocated } from "react-geolocated";
+import Webcam from "react-webcam";
 import { toast } from "sonner";
 import { Button } from "~/components/ui/button";
 import {
     Drawer,
-    DrawerClose,
     DrawerContent,
     DrawerDescription,
     DrawerFooter,
@@ -28,14 +27,14 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
     const router = useRouter();
     const supabase = useSupabase();
     const { coords, getPosition } = useGeolocated();
-    const camera = useRef<CameraType | null>(null);
+    const camera = useRef<Webcam | null>(null);
 
     const { mutate: uploadPicture, isPending } = useMutation({
         async mutationFn() {
             if (!camera.current || !coords) return;
             const { user } = dataOrThrow(await supabase.auth.getUser());
 
-            const base64image = camera.current.takePhoto("base64url") as string;
+            const base64image = camera.current.getScreenshot() as string;
             const upload = dataOrThrow(
                 await supabase.storage
                     .from("images")
@@ -77,9 +76,9 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                     <DrawerDescription>Make sure to center the subject</DrawerDescription>
                 </DrawerHeader>
 
-                <div className="mx-auto px-4 w-full lg:max-w-3xl">
+                <div className="mx-auto px-4 mb-4 w-full lg:max-w-3xl">
                     <div className="relative aspect-video grid place-items-center rounded-lg overflow-hidden">
-                        <Camera ref={camera} errorMessages={{}} facingMode="environment" />
+                        <Webcam ref={camera} audio={false} />
 
                         <LoaderIcon className="animate-spin -z-50" />
                     </div>
@@ -94,10 +93,6 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                         {isPending && <LoaderIcon className="animate-spin" />}
                         Take picture
                     </Button>
-
-                    <DrawerClose asChild>
-                        <Button variant="outline">Cancel</Button>
-                    </DrawerClose>
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>

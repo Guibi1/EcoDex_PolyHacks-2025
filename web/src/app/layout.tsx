@@ -7,6 +7,7 @@ import { Toaster } from "~/components/ui/sonner";
 import { TRPCReactProvider } from "~/trpc/react";
 
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { ThemeProvider } from "~/components/ThemeProvider";
 import { createSupabase } from "~/lib/supabase/server";
 import { createQueryClient } from "~/trpc/query-client";
 import "../tailwind.css";
@@ -31,13 +32,20 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <TRPCReactProvider>
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <MapProvider>
-                    <html lang="en" className={`${GeistSans.variable}`}>
+                    <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
                         <body className="h-dvh">
-                            {children}
+                            <ThemeProvider
+                                attribute="class"
+                                defaultTheme="system"
+                                enableSystem
+                                disableTransitionOnChange
+                            >
+                                {children}
 
-                            <Navigation />
+                                <Navigation />
 
-                            <Toaster position="top-center" />
+                                <Toaster position="top-center" />
+                            </ThemeProvider>
                         </body>
                     </html>
                 </MapProvider>
