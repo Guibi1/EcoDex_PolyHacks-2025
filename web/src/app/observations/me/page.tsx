@@ -51,21 +51,21 @@ export default function MyObservations() {
         <div className="max-w-2xl mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">My Observations</h1>
             <div className="space-y-4 overflow-auto h-screen">
-                {loading
-                    ? Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="w-full h-64 rounded-md" />)
-                    : observations.length > 0 ? (
-                        observations.map((obs) => (
-                            <Post 
-                                key={obs.id} 
-                                id={obs.id} 
-                                image={obs.image} 
-                                species={obs.species} 
-                                created_at={obs.created_at} 
-                            />
-                        ))
-                    ) : (
-                        <p className="text-gray-500">No observations found.</p>
-                    )}
+                {loading ? (
+                    Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="w-full h-64 rounded-md" />)
+                ) : observations.length > 0 ? (
+                    observations.map((obs) => (
+                        <Post
+                            key={obs.id}
+                            id={obs.id}
+                            image={obs.image}
+                            species={obs.species}
+                            created_at={obs.created_at}
+                        />
+                    ))
+                ) : (
+                    <p className="text-gray-500">No observations found.</p>
+                )}
             </div>
         </div>
     );

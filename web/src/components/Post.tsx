@@ -4,9 +4,9 @@ import { useSupabase } from "~/lib/supabase/client";
 import { Card, CardContent } from "~/components/ui/card";
 
 interface PostProps {
-    id: string;
+    id: number;
     image: string;
-    species: string;
+    species: string | null;
     created_at: string;
 }
 
@@ -21,10 +21,10 @@ export default function Post({ id, image, species, created_at }: PostProps) {
         <Card key={id} className="rounded-2xl shadow-md border border-gray-200">
             <CardContent className="p-4">
                 {image && publicUrl && (
-                    <img 
-                        src={publicUrl} 
+                    <img
+                        src={publicUrl}
                         // biome-ignore lint/a11y/noRedundantAlt: <explanation>
-                        alt="Observation Image" 
+                        alt="Observation Image"
                         className="w-full h-64 object-cover rounded-md"
                     />
                 )}
