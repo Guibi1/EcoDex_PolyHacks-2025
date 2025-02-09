@@ -59,34 +59,32 @@ export default function WorldMap() {
                         />
                     </Marker>
 
-                    {observations
-                        ?
-                        .map((observation) => (
-                            <Marker
-                                longitude={observation.position.lng}
-                                latitude={observation.position.lat}
-                                anchor="center"
-                                rotationAlignment="viewport"
-                                key={observation.id}
-                            >
-                                <PokemonDrawer id={observation.species ?? ""}>
-                                    <Button
-                                        size="icon"
-                                        variant="secondary"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            map?.flyTo({
-                                                center: [observation.position.lng, observation.position.lat],
-                                                zoom: 19,
-                                            });
-                                        }}
-                                        className="z-10"
-                                    >
-                                        {observation.isBird ? <BirdIcon /> : <LeafIcon />}
-                                    </Button>
-                                </PokemonDrawer>
-                            </Marker>
-                        ))}
+                    {observations?.map((observation) => (
+                        <Marker
+                            longitude={observation.position.lng}
+                            latitude={observation.position.lat}
+                            anchor="center"
+                            rotationAlignment="viewport"
+                            key={observation.id}
+                        >
+                            <PokemonDrawer id={observation.species ?? ""}>
+                                <Button
+                                    size="icon"
+                                    variant="secondary"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        map?.flyTo({
+                                            center: [observation.position.lng, observation.position.lat],
+                                            zoom: 19,
+                                        });
+                                    }}
+                                    className="z-10"
+                                >
+                                    {observation.isBird ? <BirdIcon /> : <LeafIcon />}
+                                </Button>
+                            </PokemonDrawer>
+                        </Marker>
+                    ))}
                 </MapGL>
             )}
 
