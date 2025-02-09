@@ -8,7 +8,7 @@ import { TRPCReactProvider } from "~/trpc/react";
 
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { ThemeProvider } from "~/components/ThemeProvider";
-import { createSupabase } from "~/lib/supabase/server";
+import { createSupabase, getServerUser } from "~/lib/supabase/server";
 import { createQueryClient } from "~/trpc/query-client";
 import "../tailwind.css";
 
@@ -19,8 +19,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: ReactNode }) {
-    const supabase = await createSupabase();
-    const user = await supabase.auth.getUser().then((d) => d.data.user);
+    const user = await getServerUser();
 
     const queryClient = createQueryClient();
     queryClient.prefetchQuery({
@@ -32,7 +31,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <TRPCReactProvider>
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <MapProvider>
-                    <html lang="en" className={`${GeistSans.variable}`} suppressHydrationWarning>
+                    <html lang="en" className={`${GeistSans.variable} antialiased`} suppressHydrationWarning>
                         <body className="h-dvh flex flex-col">
                             <ThemeProvider
                                 attribute="class"
@@ -40,7 +39,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
                                 enableSystem
                                 disableTransitionOnChange
                             >
-                                {children}
+                                <div className="grow grid overflow-hidden min-h-0">{children}</div>
 
                                 <Navigation />
 

@@ -3,15 +3,18 @@
 import {
     CameraIcon,
     ComputerIcon,
+    HomeIcon,
     LayoutListIcon,
     LogInIcon,
     LogOutIcon,
+    MapIcon,
     MoonIcon,
     SunIcon,
     SunMoonIcon,
     UserIcon,
 } from "lucide-react";
 import { useTheme } from "next-themes";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useSupabase, useUser } from "~/lib/supabase/client";
@@ -39,10 +42,18 @@ export default function Navigation() {
     const user = useUser();
 
     return (
-        <div className="z-50 sticky inset-0 top-auto border-t bg-background">
+        <div className="border-t bg-background">
             <div className="container p-2 mx-auto flex justify-around items-center">
-                <Button variant="ghost" className="size-10 rounded-full bg-muted">
-                    <LayoutListIcon />
+                <Button variant="ghost" className="size-10 rounded-full bg-muted" asChild>
+                    <Link href="/">
+                        <HomeIcon />
+                    </Link>
+                </Button>
+
+                <Button variant="ghost" className="size-10 rounded-full bg-muted" asChild>
+                    <Link href="/feed">
+                        <LayoutListIcon />
+                    </Link>
                 </Button>
 
                 <PictureDrawer>
@@ -50,6 +61,12 @@ export default function Navigation() {
                         <CameraIcon />
                     </Button>
                 </PictureDrawer>
+
+                <Button variant="ghost" className="size-10 rounded-full bg-muted" asChild>
+                    <Link href="/map">
+                        <MapIcon />
+                    </Link>
+                </Button>
 
                 <DropdownMenu>
                     <DropdownMenuTrigger>
@@ -67,6 +84,15 @@ export default function Navigation() {
                                 <p className="font-light text-sm">Bonjour, </p>
                                 {user?.user_metadata.full_name}
                             </DropdownMenuLabel>
+                        )}
+
+                        {user && (
+                            <DropdownMenuItem asChild>
+                                <Link href={`/profile/${user.id}`}>
+                                    <UserIcon />
+                                    Profile
+                                </Link>
+                            </DropdownMenuItem>
                         )}
 
                         <DropdownMenuGroup>

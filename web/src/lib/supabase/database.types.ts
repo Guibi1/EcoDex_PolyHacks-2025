@@ -36,6 +36,13 @@ export type Database = {
             referencedRelation: "Observations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "Likes_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       Observations: {
@@ -71,29 +78,57 @@ export type Database = {
             referencedRelation: "Species"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "Observations_user_id_fkey1"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
         ]
       }
       Species: {
         Row: {
-          "3d model": string | null
           created_at: string
+          description: string | null
           id: string
+          model: string | null
           name: string | null
           scientific_name: string | null
         }
         Insert: {
-          "3d model"?: string | null
           created_at?: string
+          description?: string | null
           id: string
+          model?: string | null
           name?: string | null
           scientific_name?: string | null
         }
         Update: {
-          "3d model"?: string | null
           created_at?: string
+          description?: string | null
           id?: string
+          model?: string | null
           name?: string | null
           scientific_name?: string | null
+        }
+        Relationships: []
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          id: string
+          name: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          id: string
+          name: string
+        }
+        Update: {
+          avatar_url?: string | null
+          id?: string
+          name?: string
         }
         Relationships: []
       }

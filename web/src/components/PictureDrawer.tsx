@@ -45,22 +45,13 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                 }),
             );
 
-            // Get the public URL of the uploaded image
-            const { data, error } = supabase.storage.from("images").getPublicUrl(imagePath);
-
-            if (error || !data?.publicUrl) {
-                throw new Error("Failed to get image URL.");
-            }
-
-            const publicURL = data.publicUrl;
-
             // Send image URL to the external API for classification
             const response = await fetch("https://helpful-blatantly-koi.ngrok-free.app/get_image_result", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ image: publicURL }),
+                body: JSON.stringify({ image: supabase.storage.from("images").getPublicUrl(imagePath) }),
             });
 
             if (!response.ok) {
@@ -69,9 +60,6 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
 
             // Attempt to parse the response as JSON
             const apiData = await response.json();
-
-            // Log the API response for debugging
-            console.log("API Response:", apiData);
 
             // Safely modify and parse the predicted_class string
             let predictions = [];
@@ -96,7 +84,7 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
             }
 
             // Create observation record in Supabase with the species ID (highest prediction)
-            const observation = dataOrThrow(
+            dataOrThrow(
                 await supabase
                     .from("Observations")
                     .insert({
@@ -105,12 +93,10 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                         species: highestPredictionId, // Store the ID of the highest prediction
                     })
                     .select("id"),
-            ) as { id: string }[];
-
-            return observation.at(0)?.id;
+            );
         },
-        onSuccess(id) {
-            router.push(`/uploads/${id}`);
+        onSuccess() {
+            router.push("/map");
         },
         onError(error) {
             toast(error.name, {

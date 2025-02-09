@@ -9,6 +9,10 @@ export type Observation = Omit<Database["public"]["Tables"]["Observations"]["Row
     position: Position;
 };
 
+export type Species = Database["public"]["Tables"]["Species"]["Row"];
+
+export type User = Database["public"]["Tables"]["users"]["Row"];
+
 declare module "@supabase/auth-js" {
     interface UserMetadata {
         avatar_url: string;

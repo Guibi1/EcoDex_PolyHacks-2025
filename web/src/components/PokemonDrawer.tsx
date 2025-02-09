@@ -35,9 +35,9 @@ export default function PictureDrawer({ id, children }: { id: string; children: 
                     <DrawerDescription>{pokemon.scientific_name}</DrawerDescription>
                 </DrawerHeader>
 
-                {pokemon["3d model"] && (
+                {pokemon.model && (
                     <div className="mx-auto px-4 mb-4 w-full lg:max-w-3xl">
-                        <Pokemon3dRender base64model={pokemon["3d model"]} />
+                        <Pokemon3dRender base64model={pokemon.model} />
                     </div>
                 )}
             </DrawerContent>
