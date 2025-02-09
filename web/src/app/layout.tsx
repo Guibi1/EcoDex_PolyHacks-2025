@@ -6,7 +6,7 @@ import MapProvider from "~/components/map/MapProvider";
 import { Toaster } from "~/components/ui/sonner";
 import { TRPCReactProvider } from "~/trpc/react";
 
-import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
 import { createSupabase } from "~/lib/supabase/server";
 import { createQueryClient } from "~/trpc/query-client";
 import "../tailwind.css";
@@ -32,8 +32,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <MapProvider>
                     <html lang="en" className={`${GeistSans.variable}`}>
-                        <body className="flex flex-col h-dvh overflow-hidden">
-                            <div className="grow">{children}</div>
+                        <body className="h-dvh">
+                            {children}
 
                             <Navigation />
 

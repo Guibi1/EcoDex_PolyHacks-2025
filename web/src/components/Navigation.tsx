@@ -22,60 +22,62 @@ export default function Navigation() {
     const user = useUser();
 
     return (
-        <div className="mt-2 border-t">
-            <div className="container p-2 mx-auto flex justify-around items-center">
-                <Button variant="ghost" className="size-10 rounded-full bg-muted">
-                    <LayoutListIcon />
-                </Button>
-
-                <PictureDrawer>
-                    <Button className="size-12 rounded-full">
-                        <CameraIcon />
+        <div className="h-20">
+            <div className="z-50 fixed inset-0 top-auto mt-2 border-t bg-background">
+                <div className="container p-2 mx-auto flex justify-around items-center">
+                    <Button variant="ghost" className="size-10 rounded-full bg-muted">
+                        <LayoutListIcon />
                     </Button>
-                </PictureDrawer>
 
-                <DropdownMenu>
-                    <DropdownMenuTrigger>
-                        <Avatar>
-                            <AvatarImage src={user?.user_metadata.avatar_url} />
-                            <AvatarFallback>
-                                <UserIcon />
-                            </AvatarFallback>
-                        </Avatar>
-                    </DropdownMenuTrigger>
+                    <PictureDrawer>
+                        <Button className="size-12 rounded-full">
+                            <CameraIcon />
+                        </Button>
+                    </PictureDrawer>
 
-                    {user ? (
-                        <DropdownMenuContent className="w-40">
-                            <DropdownMenuLabel>{user?.user_metadata.full_name}</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
+                    <DropdownMenu>
+                        <DropdownMenuTrigger>
+                            <Avatar>
+                                <AvatarImage src={user?.user_metadata.avatar_url} />
+                                <AvatarFallback>
+                                    <UserIcon />
+                                </AvatarFallback>
+                            </Avatar>
+                        </DropdownMenuTrigger>
 
-                            <DropdownMenuItem
-                                onClick={async () => {
-                                    const { error } = await supabase.auth.signOut();
-                                    if (error) toast(error.name, { description: error.message });
-                                    else router.refresh();
-                                }}
-                            >
-                                <LogOutIcon />
-                                Log out
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    ) : (
-                        <DropdownMenuContent className="w-40">
-                            <DropdownMenuItem
-                                onClick={() =>
-                                    supabase.auth.signInWithOAuth({
-                                        provider: "discord",
-                                        options: { redirectTo: `${location.origin}/api/auth/callback` },
-                                    })
-                                }
-                            >
-                                <LogInIcon />
-                                Log in
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    )}
-                </DropdownMenu>
+                        {user ? (
+                            <DropdownMenuContent className="w-40">
+                                <DropdownMenuLabel>{user?.user_metadata.full_name}</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuItem
+                                    onClick={async () => {
+                                        const { error } = await supabase.auth.signOut();
+                                        if (error) toast(error.name, { description: error.message });
+                                        else router.refresh();
+                                    }}
+                                >
+                                    <LogOutIcon />
+                                    Log out
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        ) : (
+                            <DropdownMenuContent className="w-40">
+                                <DropdownMenuItem
+                                    onClick={() =>
+                                        supabase.auth.signInWithOAuth({
+                                            provider: "discord",
+                                            options: { redirectTo: `${location.origin}/api/auth/callback` },
+                                        })
+                                    }
+                                >
+                                    <LogInIcon />
+                                    Log in
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        )}
+                    </DropdownMenu>
+                </div>
             </div>
         </div>
     );
