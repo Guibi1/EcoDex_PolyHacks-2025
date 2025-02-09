@@ -35,19 +35,18 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
             const { user } = dataOrThrow(await supabase.auth.getUser());
 
             const base64image = camera.current.getScreenshot() as string;
-            const upload = dataOrThrow(
-                await supabase.storage
-                    .from("images")
-                    .upload(`${user.id}/${nanoid()}.jpeg`, decode(base64image.split(",")[1] as string), {
-                        contentType: "image/jpeg",
-                    }),
+            const imagePath = `${user.id}/${nanoid()}.jpeg`;
+            dataOrThrow(
+                await supabase.storage.from("images").upload(imagePath, decode(base64image.split(",")[1] as string), {
+                    contentType: "image/jpeg",
+                }),
             );
 
             const observation = dataOrThrow(
                 await supabase
                     .from("Observations")
                     .insert({
-                        image_id: upload.id,
+                        image: imagePath,
                         position: { lng: coords.longitude, lat: coords.latitude } satisfies Position,
                     })
                     .select("id"),

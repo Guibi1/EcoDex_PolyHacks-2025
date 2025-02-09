@@ -13,7 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           id: number
-          image_id: string
+          image: string
           position: Json
           species: string | null
           user_id: string
@@ -21,7 +21,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: number
-          image_id: string
+          image: string
           position: Json
           species?: string | null
           user_id?: string
@@ -29,7 +29,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: number
-          image_id?: string
+          image?: string
           position?: Json
           species?: string | null
           user_id?: string
