@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { LocateIcon } from "lucide-react";
+import { BirdIcon, LeafIcon, LocateIcon } from "lucide-react";
 import Mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useEffect } from "react";
@@ -78,7 +78,7 @@ export default function WorldMap() {
                                 }}
                                 className="z-10"
                             >
-                                uwu
+                                {observation.isBird ? <BirdIcon /> : <LeafIcon />}
                             </Button>
                         </Marker>
                     ))}

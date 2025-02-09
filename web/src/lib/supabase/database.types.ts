@@ -50,6 +50,7 @@ export type Database = {
           created_at: string
           id: number
           image: string
+          isBird: boolean
           position: Json
           species: string | null
           user_id: string
@@ -58,6 +59,7 @@ export type Database = {
           created_at?: string
           id?: number
           image: string
+          isBird?: boolean
           position: Json
           species?: string | null
           user_id?: string
@@ -66,6 +68,7 @@ export type Database = {
           created_at?: string
           id?: number
           image?: string
+          isBird?: boolean
           position?: Json
           species?: string | null
           user_id?: string
@@ -95,6 +98,7 @@ export type Database = {
           model: string | null
           name: string | null
           scientific_name: string | null
+          threatened: boolean | null
         }
         Insert: {
           created_at?: string
@@ -103,6 +107,7 @@ export type Database = {
           model?: string | null
           name?: string | null
           scientific_name?: string | null
+          threatened?: boolean | null
         }
         Update: {
           created_at?: string
@@ -111,6 +116,7 @@ export type Database = {
           model?: string | null
           name?: string | null
           scientific_name?: string | null
+          threatened?: boolean | null
         }
         Relationships: []
       }

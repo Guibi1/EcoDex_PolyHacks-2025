@@ -1,10 +1,11 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { BirdIcon, BombIcon, LoaderIcon, RotateCcwIcon, StarIcon, UserIcon } from "lucide-react";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { BirdIcon, BombIcon, LeafIcon, LoaderIcon, RotateCcwIcon, StarIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useMemo } from "react";
-import { useSupabase } from "~/lib/supabase/client";
+import { toast } from "sonner";
+import { useSupabase, useUser } from "~/lib/supabase/client";
 import type { Observation, Species, User } from "~/lib/types";
 import { dataOrThrow } from "~/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -60,7 +61,7 @@ export default function Post(props: { id: number }) {
             <div className="flex flex-row items-center gap-4">
                 <Avatar className="size-8">
                     <AvatarFallback>
-                        <BirdIcon className="size-5" />
+                        {observation.isBird ? <BirdIcon className="size-5" /> : <LeafIcon className="size-5" />}
                     </AvatarFallback>
                 </Avatar>
 
@@ -86,16 +87,53 @@ export default function Post(props: { id: number }) {
                     </p>
                 </div>
 
-                <Like />
+                <Like postId={observation.id} />
             </div>
         </div>
     );
 }
 
-function Like() {
+function Like({ postId }: { postId: number }) {
+    const supabase = useSupabase();
+    const user = useUser();
+    const {
+        data: likes,
+        isPending: loading,
+        refetch,
+    } = useQuery({
+        queryKey: ["likes", postId],
+        async queryFn() {
+            const likes = dataOrThrow(await supabase.from("Likes").select("user_id").eq("observation_id", postId));
+            return likes;
+        },
+    });
+
+    const { mutate: toggleLike, isPending } = useMutation({
+        async mutationFn() {
+            if (!user) return false;
+            if (likes?.some((l) => l.user_id === user.id)) {
+                dataOrThrow(await supabase.from("Likes").delete().eq("user_id", user.id).eq("observation_id", postId));
+            } else {
+                dataOrThrow(await supabase.from("Likes").insert({ user_id: user.id, observation_id: postId }));
+            }
+        },
+        onSuccess() {
+            refetch();
+        },
+        onError(error) {
+            toast(error.name, {
+                icon: <BombIcon />,
+                description: error.message,
+            });
+        },
+    });
+
     return (
-        <Button variant="ghost" size="icon">
-            <StarIcon />
-        </Button>
+        <div className="flex items-center">
+            <p className="text-sm">{likes?.length}</p>
+            <Button variant="ghost" size="icon" disabled={loading || isPending} onClick={() => toggleLike()}>
+                <StarIcon className={user && likes?.some((l) => l.user_id === user.id) ? "fill-current" : ""} />
+            </Button>
+        </div>
     );
 }

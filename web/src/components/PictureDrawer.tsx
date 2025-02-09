@@ -5,7 +5,7 @@ import { decode } from "base64-arraybuffer";
 import { BombIcon, LoaderIcon } from "lucide-react";
 import { nanoid } from "nanoid";
 import { useRouter } from "next/navigation";
-import { type ReactNode, useRef } from "react";
+import { type ReactNode, useRef, useState } from "react";
 import { useGeolocated } from "react-geolocated";
 import Webcam from "react-webcam";
 import { toast } from "sonner";
@@ -22,15 +22,17 @@ import {
 import { useSupabase } from "~/lib/supabase/client";
 import type { Position } from "~/lib/types";
 import { dataOrThrow } from "~/lib/utils";
+import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 
 export default function PictureDrawer({ children }: { children: ReactNode }) {
     const router = useRouter();
     const supabase = useSupabase();
+    const [isBird, setIsBird] = useState(true);
     const { coords, getPosition } = useGeolocated();
     const camera = useRef<Webcam | null>(null);
 
     const { mutate: uploadPicture, isPending } = useMutation({
-        async mutationFn() {
+        async mutationFn(isBird: boolean) {
             if (!camera.current || !coords) return;
             const { user } = dataOrThrow(await supabase.auth.getUser());
 
@@ -46,7 +48,10 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
             );
 
             // Send image URL to the external API for classification
-            const response = await fetch("https://helpful-blatantly-koi.ngrok-free.app/get_image_result", {
+            const url = isBird
+                ? "https://helpful-blatantly-koi.ngrok-free.app/get_bird_result"
+                : "https://helpful-blatantly-koi.ngrok-free.app/get_mush_result";
+            const response = await fetch(url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -88,6 +93,7 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                 await supabase
                     .from("Observations")
                     .insert({
+                        isBird,
                         image: imagePath,
                         position: { lng: coords.longitude, lat: coords.latitude } satisfies Position,
                         species: highestPredictionId, // Store the ID of the highest prediction
@@ -112,8 +118,8 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
 
             <DrawerContent>
                 <DrawerHeader>
-                    <DrawerTitle>Take a picture of the plant or animal</DrawerTitle>
-                    <DrawerDescription>Make sure to center the subject</DrawerDescription>
+                    <DrawerTitle>Vous avez trouvé quelque chose?</DrawerTitle>
+                    <DrawerDescription>Prennez une photo d'un champignon ou d'un oiseau</DrawerDescription>
                 </DrawerHeader>
 
                 <div className="mx-auto px-4 mb-4 w-full lg:max-w-3xl">
@@ -125,13 +131,24 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                 </div>
 
                 <DrawerFooter>
+                    <Tabs
+                        className="flex justify-center"
+                        defaultValue="bird"
+                        onValueChange={(v) => setIsBird(v === "bird")}
+                    >
+                        <TabsList>
+                            <TabsTrigger value="bird">Oiseau</TabsTrigger>
+                            <TabsTrigger value="mush">Champignon</TabsTrigger>
+                        </TabsList>
+                    </Tabs>
+
                     <Button
                         size="lg"
-                        onClick={() => uploadPicture()}
+                        onClick={() => uploadPicture(isBird)}
                         disabled={!camera.current || !coords || isPending}
                     >
                         {isPending && <LoaderIcon className="animate-spin" />}
-                        Take picture
+                        Prendre en photo
                     </Button>
                 </DrawerFooter>
             </DrawerContent>
