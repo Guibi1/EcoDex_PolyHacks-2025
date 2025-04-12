@@ -9,6 +9,7 @@ import { useSupabase, useUser } from "~/lib/supabase/client";
 import type { Observation, Species, User } from "~/lib/types";
 import { dataOrThrow } from "~/lib/utils";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 
 export default function Post(props: { id: number }) {
@@ -71,7 +72,22 @@ export default function Post(props: { id: number }) {
                 </div>
             </div>
 
-            <img src={imageSrc} alt="observation" className="w-full h-64 object-cover rounded" />
+            <div className="relative w-full">
+                <img
+                    src={imageSrc}
+                    alt="background"
+                    className="hidden lg:block absolute inset-0 w-full h-full object-cover rounded blur-xs opacity-70 -z-10"
+                />
+                <img src={imageSrc} alt="observation" className="w-full lg:w-96 mx-auto h-64 object-cover rounded" />
+
+                <div className="absolute top-2 lg:-top-12 right-2">
+                    {observation.Species.threatened ? (
+                        <Badge variant="destructive">En danger</Badge>
+                    ) : (
+                        <Badge>Commun</Badge>
+                    )}
+                </div>
+            </div>
 
             <div className="flex gap-4 items-center justify-between">
                 <div className="h-6 flex flex-row items-center">

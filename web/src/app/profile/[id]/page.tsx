@@ -13,15 +13,11 @@ export default async function OtherUserProfilePage({ params }: { params: Promise
     const user = dataOrThrow(
         await supabase
             .from("users")
-            .select("*, Observations(*)")
+            .select("*, Observations(id)")
             .eq("id", (await params).id)
             .limit(1),
     ).at(0);
     if (!user) notFound();
-
-    for (const obs of user.Observations) {
-        queryClient.setQueryData(["observation", obs.id], { ...obs, users: user });
-    }
 
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>

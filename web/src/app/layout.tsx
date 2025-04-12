@@ -31,8 +31,8 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
         <TRPCReactProvider>
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <MapProvider>
-                    <html lang="en" className={`${GeistSans.variable} antialiased`} suppressHydrationWarning>
-                        <body className="h-dvh flex flex-col">
+                    <html lang="en" className={`${GeistSans.variable} antialiased h-screen`} suppressHydrationWarning>
+                        <body className="h-dvh! flex flex-col">
                             <ThemeProvider
                                 attribute="class"
                                 defaultTheme="system"

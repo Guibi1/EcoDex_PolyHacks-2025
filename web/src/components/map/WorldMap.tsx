@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { BirdIcon, LeafIcon, LocateIcon } from "lucide-react";
 import Mapbox from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useGeolocated } from "react-geolocated";
 import MapGL, { Marker, useMap } from "react-map-gl";
 import { env } from "~/env";
@@ -26,6 +26,39 @@ export default function WorldMap() {
             return dataOrThrow(await supabase.from("Observations").select().returns<Observation[]>());
         },
     });
+
+    const markers = useMemo(
+        () =>
+            observations
+                ?.filter((o) => !!o.species)
+                .map((observation) => (
+                    <Marker
+                        longitude={observation.position.lng}
+                        latitude={observation.position.lat}
+                        anchor="center"
+                        rotationAlignment="viewport"
+                        key={observation.id}
+                    >
+                        <PokemonDrawer id={observation.id}>
+                            <Button
+                                size="icon"
+                                variant="secondary"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    map?.flyTo({
+                                        center: [observation.position.lng, observation.position.lat],
+                                        zoom: 19,
+                                    });
+                                }}
+                                className="z-10"
+                            >
+                                {observation.isBird ? <BirdIcon /> : <LeafIcon />}
+                            </Button>
+                        </PokemonDrawer>
+                    </Marker>
+                )),
+        [map?.flyTo, observations],
+    );
 
     return (
         <>
@@ -59,32 +92,7 @@ export default function WorldMap() {
                         />
                     </Marker>
 
-                    {observations?.map((observation) => (
-                        <Marker
-                            longitude={observation.position.lng}
-                            latitude={observation.position.lat}
-                            anchor="center"
-                            rotationAlignment="viewport"
-                            key={observation.id}
-                        >
-                            <PokemonDrawer id={observation.species ?? ""}>
-                                <Button
-                                    size="icon"
-                                    variant="secondary"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        map?.flyTo({
-                                            center: [observation.position.lng, observation.position.lat],
-                                            zoom: 19,
-                                        });
-                                    }}
-                                    className="z-10"
-                                >
-                                    {observation.isBird ? <BirdIcon /> : <LeafIcon />}
-                                </Button>
-                            </PokemonDrawer>
-                        </Marker>
-                    ))}
+                    {markers}
                 </MapGL>
             )}
 

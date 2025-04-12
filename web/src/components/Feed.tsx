@@ -12,7 +12,7 @@ export default function Feed(props: { ids: number[]; filter?: string }) {
     const rowVirtualizer = useVirtualizer({
         count: ids.length,
         getScrollElement: () => parentRef.current,
-        estimateSize: () => 389,
+        estimateSize: () => 409,
     });
 
     useEffect(() => {

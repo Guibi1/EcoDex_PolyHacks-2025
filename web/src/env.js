@@ -3,6 +3,7 @@ import { z } from "zod";
 
 export const env = createEnv({
     server: {
+        MISTRAL_API_KEY: z.string(),
         NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
     },
 
@@ -14,6 +15,7 @@ export const env = createEnv({
     },
 
     runtimeEnv: {
+        MISTRAL_API_KEY: process.env.MISTRAL_API_KEY,
         NODE_ENV: process.env.NODE_ENV,
 
         NEXT_PUBLIC_MAPBOX_API: process.env.NEXT_PUBLIC_MAPBOX_API,

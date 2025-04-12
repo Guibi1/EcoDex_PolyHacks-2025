@@ -19,22 +19,21 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "~/components/ui/drawer";
-import { useSupabase } from "~/lib/supabase/client";
+import { useSupabase, useUser } from "~/lib/supabase/client";
 import type { Position } from "~/lib/types";
 import { dataOrThrow } from "~/lib/utils";
-import { Tabs, TabsList, TabsTrigger } from "./ui/tabs";
 
 export default function PictureDrawer({ children }: { children: ReactNode }) {
     const router = useRouter();
+    const user = useUser();
     const supabase = useSupabase();
-    const [isBird, setIsBird] = useState(true);
+    const [open, setOpen] = useState(false);
     const { coords, getPosition } = useGeolocated();
     const camera = useRef<Webcam | null>(null);
 
     const { mutate: uploadPicture, isPending } = useMutation({
         async mutationFn(isBird: boolean) {
-            if (!camera.current || !coords) return;
-            const { user } = dataOrThrow(await supabase.auth.getUser());
+            if (!camera.current || !coords || !user) return;
 
             const base64image = camera.current.getScreenshot() as string;
             const imagePath = `${user.id}/${nanoid()}.jpeg`;
@@ -102,6 +101,7 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
             );
         },
         onSuccess() {
+            setOpen(false);
             router.push("/map");
         },
         onError(error) {
@@ -112,8 +112,30 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
         },
     });
 
+    if (!user) {
+        return (
+            <Button
+                onClick={() =>
+                    supabase.auth.signInWithOAuth({
+                        provider: "discord",
+                        options: { redirectTo: `${location.origin}/api/auth/callback` },
+                    })
+                }
+                asChild
+            >
+                {children}
+            </Button>
+        );
+    }
+
     return (
-        <Drawer onOpenChange={getPosition}>
+        <Drawer
+            open={open}
+            onOpenChange={(o) => {
+                getPosition();
+                setOpen(o);
+            }}
+        >
             <DrawerTrigger asChild>{children}</DrawerTrigger>
 
             <DrawerContent>
@@ -124,14 +146,18 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
 
                 <div className="mx-auto px-4 mb-4 w-full lg:max-w-3xl">
                     <div className="relative aspect-video grid place-items-center rounded-lg overflow-hidden">
-                        <Webcam ref={camera} audio={false} />
+                        <Webcam
+                            ref={camera}
+                            audio={false}
+                            videoConstraints={{ facingMode: { ideal: "environment" } }}
+                        />
 
                         <LoaderIcon className="animate-spin -z-50" />
                     </div>
                 </div>
 
                 <DrawerFooter>
-                    <Tabs
+                    {/* <Tabs
                         className="flex justify-center"
                         defaultValue="bird"
                         onValueChange={(v) => setIsBird(v === "bird")}
@@ -140,11 +166,11 @@ export default function PictureDrawer({ children }: { children: ReactNode }) {
                             <TabsTrigger value="bird">Oiseau</TabsTrigger>
                             <TabsTrigger value="mush">Champignon</TabsTrigger>
                         </TabsList>
-                    </Tabs>
+                    </Tabs> */}
 
                     <Button
                         size="lg"
-                        onClick={() => uploadPicture(isBird)}
+                        onClick={() => uploadPicture(true)}
                         disabled={!camera.current || !coords || isPending}
                     >
                         {isPending && <LoaderIcon className="animate-spin" />}
